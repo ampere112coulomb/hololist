@@ -9,10 +9,14 @@
   :root { color-scheme: light; }
   body {
     margin: 0;
-    background-color: #c5e9fc;
+    background-color: #fff;
     background-image:
-      repeating-linear-gradient(135deg, rgb(24 127 182 / .16) 0 1px, transparent 1px 36px),
-      linear-gradient(155deg, #a6d9f5, #d7effd 55%, #b2e0fa);
+      radial-gradient(ellipse at center, #fff 18%, rgb(255 255 255 / .88) 43%, transparent 81%),
+      conic-gradient(from 63deg at 15% 50%, rgb(46 180 238 / .14) 54deg, transparent 0deg),
+      repeating-linear-gradient(60deg, rgb(49 176 244 / .12) 0 1px, transparent 1px 72px),
+      repeating-linear-gradient(120deg, rgb(49 176 244 / .09) 0 1px, transparent 1px 72px);
+    background-size: 100% 100%, 120px 124px, auto, auto;
+    background-position: center, 36px 26px, center, center;
     background-attachment: fixed;
     color: #080808;
     font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
