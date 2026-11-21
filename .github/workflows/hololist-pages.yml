@@ -1,0 +1,51 @@
+name: Update hololist on GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '3,13,23,33,43,53 * * * *'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: hololist-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Generate NEWS cards
+        run: |
+          if ! node update-news.mjs; then
+            echo "::warning::Instagram refresh failed; publishing the saved cards."
+            node -e 'const data=require("./news.json"); if (!Array.isArray(data) || !data.length) process.exit(1)'
+          fi
+          git add news.json
+          if ! git diff --cached --quiet -- news.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Update Instagram news cards"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+          mkdir -p _site
+          cp index.html news.json LIVE_background.png ARCHIVE_background.png NEWS_background.png _site/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - uses: actions/deploy-pages@v4
+        id: deployment
