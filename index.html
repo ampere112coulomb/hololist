@@ -217,6 +217,7 @@
     text-shadow: 0 1px 4px #000;
   }
   #featured-player {
+    pointer-events: none;
     position: absolute;
     right: 0;
     top: 50%;
@@ -226,17 +227,6 @@
     display: block;
     border: 0;
     background: #000;
-  }
-  #featured-link {
-    position: absolute;
-    z-index: 1;
-    right: 12px;
-    bottom: clamp(46px, 8vh, 80px);
-    padding: 6px 10px;
-    border-radius: 5px;
-    background: rgb(0 0 0 / .65);
-    color: #fff;
-    font-size: 14px;
   }
   #featured-status {
     position: absolute;
@@ -278,10 +268,9 @@
         <span class="badge">LIVE</span>
         <h2 id="featured-title"></h2>
       </div>
-      <iframe id="featured-player" title="ピックアップライブ" hidden
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      <a id="featured-link" target="_blank" rel="noopener noreferrer" hidden>YouTubeで視聴</a>
+      <iframe id="featured-player" title="ピックアップライブ" tabindex="-1" inert hidden
+        allow="autoplay; encrypted-media"
+        referrerpolicy="strict-origin-when-cross-origin"></iframe>
     </div>
   </section>
   <section class="belt" data-label="LIVE" aria-label="LIVE">
@@ -372,7 +361,6 @@
   const featuredHeading = document.querySelector("#featured-heading");
   const featuredTitle = document.querySelector("#featured-title");
   const featuredStatus = document.querySelector("#featured-status");
-  const featuredLink = document.querySelector("#featured-link");
   let featuredId;
 
   function updateFeatured(videos) {
@@ -383,7 +371,6 @@
       featuredPlayer.removeAttribute("src");
       featuredPlayer.hidden = true;
       featuredHeading.hidden = true;
-      featuredLink.hidden = true;
       featuredStatus.textContent = "現在ライブ配信中の枠はありません";
       featuredStatus.hidden = false;
       return;
@@ -392,12 +379,10 @@
     featuredPlayer.title = video.title;
     if (video.id !== featuredId) {
       featuredId = video.id;
-      featuredPlayer.src = "https://www.youtube.com/embed/" + video.id + "?autoplay=1&mute=1&playsinline=1&rel=0&controls=0";
-      featuredLink.href = "https://www.youtube.com/watch?v=" + video.id;
+      featuredPlayer.src = "https://www.youtube.com/embed/" + video.id + "?autoplay=1&mute=1&playsinline=1&rel=0&controls=0&disablekb=1&fs=0";
     }
     featuredPlayer.hidden = false;
     featuredHeading.hidden = false;
-    featuredLink.hidden = false;
     featuredStatus.hidden = true;
   }
 
