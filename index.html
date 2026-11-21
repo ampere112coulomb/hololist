@@ -206,7 +206,7 @@
   .featured-heading .badge {
     border-radius: .5em;
     padding: .4em .8em;
-    font-size: clamp(14px, 2.6vw, 52px);
+    font-size: clamp(7px, 1.3vw, 26px);
   }
   #featured-title {
     margin: 0;
@@ -392,7 +392,7 @@
     featuredPlayer.title = video.title;
     if (video.id !== featuredId) {
       featuredId = video.id;
-      featuredPlayer.src = "https://www.youtube.com/embed/" + video.id + "?autoplay=1&mute=1&playsinline=1&rel=0";
+      featuredPlayer.src = "https://www.youtube.com/embed/" + video.id + "?autoplay=1&mute=1&playsinline=1&rel=0&controls=0";
       featuredLink.href = "https://www.youtube.com/watch?v=" + video.id;
     }
     featuredPlayer.hidden = false;
