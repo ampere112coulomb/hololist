@@ -253,6 +253,11 @@
     #featured-player { width: 100%; height: 100%; }
     #featured-status { left: 7%; }
   }
+  html { scrollbar-width: none; }
+  html::-webkit-scrollbar { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
 </style>
 </head>
 <body>
@@ -564,6 +569,58 @@
     "直近12時間に終了した配信はありません");
   startBelt(document.querySelector('[data-label="NEWS"]'), loadNews, "news",
     "Instagramの投稿はありません");
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let scrollFrame = 0;
+  let scrollTarget = 0;
+  let scrollPosition = 0;
+  let scrollLastTime = 0;
+
+  function stopPageScroll() {
+    cancelAnimationFrame(scrollFrame);
+    scrollFrame = 0;
+  }
+
+  function animatePageScroll(now) {
+    const elapsed = Math.min(now - scrollLastTime, 50);
+    scrollLastTime = now;
+    scrollPosition += (scrollTarget - scrollPosition) * (1 - Math.exp(-elapsed / 62));
+    if (Math.abs(scrollPosition - scrollTarget) < 0.5) {
+      window.scrollTo({top: scrollTarget, behavior: "instant"});
+      scrollFrame = 0;
+      return;
+    }
+    window.scrollTo({top: scrollPosition, behavior: "instant"});
+    scrollFrame = requestAnimationFrame(animatePageScroll);
+  }
+
+  window.addEventListener("wheel", event => {
+    if (event.defaultPrevented || !event.cancelable || event.ctrlKey || event.metaKey ||
+        event.shiftKey || Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
+    const mode = event.deltaMode;
+    const delta = event.deltaY;
+    const pixels = Math.abs(delta);
+    const discrete = mode !== 0 || (pixels >= 100 && (pixels % 100 === 0 || pixels % 120 === 0));
+    if (reducedMotion.matches || !discrete) {
+      stopPageScroll();
+      return;
+    }
+
+    const page = document.scrollingElement;
+    const maxScroll = Math.max(0, page.scrollHeight - page.clientHeight);
+    const distance = delta * (mode === 1 ? 16 : mode === 2 ? page.clientHeight : 1);
+    scrollTarget = Math.min(maxScroll, Math.max(0, (scrollFrame ? scrollTarget : window.scrollY) + distance));
+    event.preventDefault();
+    if (!scrollFrame) {
+      scrollPosition = window.scrollY;
+      scrollLastTime = performance.now();
+      scrollFrame = requestAnimationFrame(animatePageScroll);
+    }
+  }, {passive: false});
+
+  window.addEventListener("pointerdown", stopPageScroll);
+  window.addEventListener("keydown", stopPageScroll);
+  reducedMotion.addEventListener("change", stopPageScroll);
 </script>
 </body>
 </html>
