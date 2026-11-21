@@ -144,10 +144,106 @@
   .news .badge { background: #7545a1; }
   .news .badge::before { content: none; }
   .news .thumb { background: #e7edf2; }
+  .featured {
+    position: relative;
+    display: grid;
+    grid-template-columns: 46fr 54fr;
+    min-height: clamp(360px, 56.25vw, 100svh);
+    background: #111827;
+    color: #fff;
+    isolation: isolate;
+  }
+  .featured-copy {
+    display: grid;
+    align-content: center;
+    gap: clamp(28px, 5vw, 96px);
+    padding: 36px 12% 50px 4.5%;
+  }
+  .featured-copy::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #31b0f4;
+    clip-path: polygon(0 0, 39% 0, 54% 100%, 0 100%);
+    z-index: -1;
+  }
+  .featured-copy h1, .featured-copy p {
+    margin: 0;
+    font-size: clamp(18px, 3.6vw, 76px);
+    font-weight: 900;
+    line-height: 1.45;
+  }
+  .featured-version {
+    position: absolute;
+    bottom: 12px;
+    right: 48%;
+    font-size: clamp(13px, 2.2vw, 42px);
+    font-weight: 800;
+  }
+  .featured-video {
+    align-self: center;
+    min-width: 0;
+    padding: clamp(16px, 3vw, 56px) clamp(16px, 3vw, 56px) clamp(16px, 3vw, 56px) 10%;
+    display: grid;
+    gap: 16px;
+  }
+  .featured-heading {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .featured-heading .badge {
+    padding: .4em .6em;
+    font-size: clamp(15px, 2.35vw, 45px);
+  }
+  #featured-title {
+    margin: 0;
+    align-self: center;
+    font-size: clamp(15px, 1.55vw, 30px);
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+  #featured-player {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    min-height: 200px;
+    display: block;
+    border: 0;
+    background: #000;
+  }
+  #featured-link { justify-self: end; color: #fff; font-size: 14px; }
+  #featured-status { margin: 0; padding: 24px 0; }
+  .featured + .belt { margin-top: 0; }
+  @media (max-width: 700px) {
+    .featured { grid-template-columns: 1fr; min-height: 0; }
+    .featured-copy { position: relative; background: #31b0f4; padding: 24px 20px 40px; gap: 16px; }
+    .featured-copy::before { content: none; }
+    .featured-copy h1, .featured-copy p { font-size: clamp(22px, 5vw, 36px); }
+    .featured-version { right: 20px; bottom: 10px; }
+    .featured-video { padding: 16px; gap: 10px; }
+  }
 </style>
 </head>
 <body>
 <main>
+  <section class="featured" aria-label="ピックアップライブ">
+    <div class="featured-copy">
+      <h1>推し活を<br>更に質の高いものへ</h1>
+      <p>推し活を<br>更に楽しいものへ</p>
+      <span class="featured-version">hololist ver.2</span>
+    </div>
+    <div class="featured-video">
+      <p id="featured-status" role="status">配信を取得中…</p>
+      <div id="featured-heading" class="featured-heading" hidden>
+        <span class="badge">LIVE</span>
+        <h2 id="featured-title"></h2>
+      </div>
+      <iframe id="featured-player" title="ピックアップライブ" hidden
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      <a id="featured-link" target="_blank" rel="noopener noreferrer" hidden>YouTubeで視聴</a>
+    </div>
+  </section>
   <section class="belt" data-label="LIVE" aria-label="LIVE">
     <div id="live-track" class="track" aria-label="ライブ配信中の枠" hidden></div>
     <button class="step previous" type="button" aria-label="ライブの前の4枠へ" aria-controls="live-track" hidden>◀</button>
@@ -232,6 +328,39 @@
     return result;
   }
 
+  const featuredPlayer = document.querySelector("#featured-player");
+  const featuredHeading = document.querySelector("#featured-heading");
+  const featuredTitle = document.querySelector("#featured-title");
+  const featuredStatus = document.querySelector("#featured-status");
+  const featuredLink = document.querySelector("#featured-link");
+  let featuredId;
+
+  function updateFeatured(videos) {
+    let video = videos.find(item => item.id === featuredId);
+    video ??= videos[Math.floor(Math.random() * videos.length)];
+    if (!video) {
+      featuredId = undefined;
+      featuredPlayer.removeAttribute("src");
+      featuredPlayer.hidden = true;
+      featuredHeading.hidden = true;
+      featuredLink.hidden = true;
+      featuredStatus.textContent = "現在ライブ配信中の枠はありません";
+      featuredStatus.hidden = false;
+      return;
+    }
+    featuredTitle.textContent = video.title;
+    featuredPlayer.title = video.title;
+    if (video.id !== featuredId) {
+      featuredId = video.id;
+      featuredPlayer.src = "https://www.youtube.com/embed/" + video.id + "?autoplay=1&mute=1&playsinline=1&rel=0";
+      featuredLink.href = "https://www.youtube.com/watch?v=" + video.id;
+    }
+    featuredPlayer.hidden = false;
+    featuredHeading.hidden = false;
+    featuredLink.hidden = false;
+    featuredStatus.hidden = true;
+  }
+
   function startBelt(belt, loadVideos, expectedStatus, emptyMessage) {
     const track = belt.querySelector(".track");
     const previous = belt.querySelector(".previous");
@@ -311,8 +440,13 @@
             title: video.title || "タイトルなし"
           });
         }
-        render([...videos.values()]);
+        const cards = [...videos.values()];
+        if (expectedStatus === "live") updateFeatured(cards);
+        render(cards);
       } catch (error) {
+        if (expectedStatus === "live" && !featuredId) {
+          featuredStatus.textContent = "配信情報を取得できませんでした。再試行します。";
+        }
         track.hidden = true;
         message(expectedStatus === "news" ? error.message : error.status === 401 || error.status === 403
           ? "Holodex APIキーを確認してください。"
