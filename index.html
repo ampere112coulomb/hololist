@@ -146,81 +146,121 @@
   .news .thumb { background: #e7edf2; }
   .featured {
     position: relative;
-    display: grid;
-    grid-template-columns: 46fr 54fr;
-    min-height: clamp(360px, 56.25vw, 100svh);
-    background: #111827;
-    color: #fff;
+    width: 100%;
+    height: 100svh;
+    overflow: hidden;
     isolation: isolate;
+    background: #10161c;
+    color: #fff;
   }
   .featured-copy {
-    display: grid;
-    align-content: center;
-    gap: clamp(28px, 5vw, 96px);
-    padding: 36px 12% 50px 4.5%;
-  }
-  .featured-copy::before {
-    content: "";
     position: absolute;
     inset: 0;
+    z-index: 2;
+    display: grid;
+    align-content: start;
+    gap: clamp(25px, 12vh, 150px);
+    padding: clamp(28px, 13vh, 160px) 0 0 2.2%;
     background: #31b0f4;
-    clip-path: polygon(0 0, 39% 0, 54% 100%, 0 100%);
-    z-index: -1;
+    clip-path: polygon(0 0, 38.6% 0, 55.3% 100%, 0 100%);
+    pointer-events: none;
   }
   .featured-copy h1, .featured-copy p {
     margin: 0;
-    font-size: clamp(18px, 3.6vw, 76px);
+    width: max-content;
+    font-size: clamp(14px, min(4.05vw, 8vh), 84px);
     font-weight: 900;
     line-height: 1.45;
   }
   .featured-version {
     position: absolute;
-    bottom: 12px;
-    right: 48%;
-    font-size: clamp(13px, 2.2vw, 42px);
+    bottom: 1.5%;
+    right: 46.7%;
+    font-size: clamp(16px, 2.65vw, 54px);
     font-weight: 800;
   }
   .featured-video {
-    align-self: center;
-    min-width: 0;
-    padding: clamp(16px, 3vw, 56px) clamp(16px, 3vw, 56px) clamp(16px, 3vw, 56px) 10%;
-    display: grid;
-    gap: 16px;
+    position: absolute;
+    inset: 0 0 0 38.5%;
+    overflow: hidden;
+    background: #10161c;
+  }
+  .featured-video::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgb(0 0 0 / .8), transparent 26%, transparent 78%, rgb(0 0 0 / .48));
+    pointer-events: none;
   }
   .featured-heading {
+    position: absolute;
+    z-index: 1;
+    top: clamp(10px, 2vh, 25px);
+    left: 3.5%;
+    right: 5%;
     display: flex;
-    gap: 12px;
+    gap: clamp(8px, 1.15vw, 22px);
     align-items: flex-start;
+    pointer-events: none;
   }
   .featured-heading .badge {
-    padding: .4em .6em;
-    font-size: clamp(15px, 2.35vw, 45px);
+    border-radius: .5em;
+    padding: .4em .8em;
+    font-size: clamp(14px, 2.6vw, 52px);
   }
   #featured-title {
     margin: 0;
     align-self: center;
-    font-size: clamp(15px, 1.55vw, 30px);
+    font-size: clamp(14px, 1.55vw, 32px);
     line-height: 1.45;
     overflow-wrap: anywhere;
+    text-shadow: 0 1px 4px #000;
   }
   #featured-player {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    min-height: 200px;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: max(100%, 177.78svh);
+    height: max(100%, 34.6vw);
     display: block;
     border: 0;
     background: #000;
   }
-  #featured-link { justify-self: end; color: #fff; font-size: 14px; }
-  #featured-status { margin: 0; padding: 24px 0; }
+  #featured-link {
+    position: absolute;
+    z-index: 1;
+    right: 12px;
+    bottom: clamp(46px, 8vh, 80px);
+    padding: 6px 10px;
+    border-radius: 5px;
+    background: rgb(0 0 0 / .65);
+    color: #fff;
+    font-size: 14px;
+  }
+  #featured-status {
+    position: absolute;
+    z-index: 1;
+    top: 48%;
+    right: 7%;
+    left: 24%;
+    margin: 0;
+    text-align: center;
+  }
   .featured + .belt { margin-top: 0; }
-  @media (max-width: 700px) {
-    .featured { grid-template-columns: 1fr; min-height: 0; }
-    .featured-copy { position: relative; background: #31b0f4; padding: 24px 20px 40px; gap: 16px; }
-    .featured-copy::before { content: none; }
-    .featured-copy h1, .featured-copy p { font-size: clamp(22px, 5vw, 36px); }
-    .featured-version { right: 20px; bottom: 10px; }
-    .featured-video { padding: 16px; gap: 10px; }
+  @media (max-width: 700px) and (orientation: portrait) {
+    .featured {
+      display: grid;
+      grid-template-rows: auto minmax(250px, 1fr);
+      height: auto;
+      min-height: 100svh;
+    }
+    .featured-copy { position: relative; inset: auto; clip-path: none; padding: 20px 18px 40px; gap: 10px; }
+    .featured-copy h1, .featured-copy p { font-size: clamp(21px, 6vw, 34px); }
+    .featured-version { right: 18px; bottom: 8px; }
+    .featured-video { position: relative; inset: auto; }
+    #featured-player { width: 100%; height: 100%; }
+    #featured-status { left: 7%; }
   }
 </style>
 </head>
