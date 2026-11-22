@@ -485,13 +485,41 @@
     text-underline-offset: 4px;
     font-weight: 700;
   }
+  #back-to-top {
+    position: fixed;
+    right: max(14px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    z-index: 5;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 4px;
+    width: 58px;
+    height: 58px;
+    border: 1px solid #b8def3;
+    border-radius: 50%;
+    background: #fff;
+    color: #076a96;
+    box-shadow: 0 4px 18px rgb(13 63 91 / .2);
+    cursor: pointer;
+    font: 800 11px/1 Arial, sans-serif;
+  }
+  #back-to-top::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-top: 2px solid currentColor;
+    border-left: 2px solid currentColor;
+    transform: translateY(2px) rotate(45deg);
+  }
+  #back-to-top:hover, #back-to-top:focus-visible { background: #e5f6ff; }
 </style>
 </head>
 <body>
 <main>
   <section class="featured" aria-label="ピックアップライブ">
     <div class="featured-copy">
-      <h1>推し活を<br>更に質の高いものへ</h1>
+      <h1 tabindex="-1">推し活を<br>更に質の高いものへ</h1>
       <p>推し活を<br>更に楽しいものへ</p>
       <span class="featured-version">hololist ver.2</span>
     </div>
@@ -638,6 +666,7 @@
     <a class="events-catalog" href="https://hololive.hololivepro.com/events/">公式イベント一覧を見る</a>
   </section>
 </main>
+<button id="back-to-top" type="button" aria-label="ページトップへ" hidden>TOP</button>
 <template id="card-template">
   <a class="card" target="_blank" rel="noopener noreferrer">
     <img class="thumb" alt="" referrerpolicy="no-referrer">
@@ -1141,6 +1170,20 @@
     }
   }
   refreshEvents();
+
+  const backToTop = document.querySelector("#back-to-top");
+
+  function updateBackToTop() {
+    backToTop.hidden = window.scrollY < 320;
+  }
+
+  backToTop.addEventListener("click", () => {
+    stopPageScroll();
+    document.querySelector(".featured h1").focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: reducedMotion.matches ? "instant" : "smooth" });
+  });
+  window.addEventListener("scroll", updateBackToTop, { passive: true });
+  updateBackToTop();
 </script>
 </body>
 </html>
