@@ -5,8 +5,9 @@ const files = new Map([
   ["/", ["index.html", "text/html; charset=utf-8"]],
   ["/index.html", ["index.html", "text/html; charset=utf-8"]],
   ["/news.json", ["news.json", "application/json; charset=utf-8"]],
+  ["/music.json", ["music.json", "application/json; charset=utf-8"]],
   ...["holodorinavi", "hololist"].map(name => ["/" + name + "-logo.png", [name + "-logo.png", "image/png"]]),
-  ...["LIVE", "ARCHIVE", "NEWS"].map(name => [
+  ...["LIVE", "ARCHIVE", "NEWS", "MUSIC"].map(name => [
     "/" + name + "_background.png", [name + "_background.png", "image/png"]
   ])
 ]);
