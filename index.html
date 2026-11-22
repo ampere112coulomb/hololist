@@ -795,7 +795,6 @@
   });
 
   const featuredRotationMs = 8_000;
-  const featuredMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   let featuredVideos = [];
   let rotatingFeatured = false;
 
@@ -854,10 +853,6 @@
       const imageUrl = await loadFeaturedImage(candidate.id);
       const next = featuredVideos.find(video => video.id === candidate.id);
       if (!imageUrl || !next || featuredId !== previousId || featuredVideos.length < 2 || document.hidden) return;
-      if (featuredMotion.matches) {
-        showFeatured(next, imageUrl);
-        return;
-      }
       for (const element of [featuredThumbnail, featuredHeading]) {
         const overlay = element.cloneNode(true);
         overlay.removeAttribute("id");
