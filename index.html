@@ -446,14 +446,30 @@
     letter-spacing: .045em;
   }
   .music-more-arrow {
-    display: grid;
-    min-height: 1.3em;
-    align-items: center;
+    position: relative;
+    width: clamp(30px, 3.8vw, 46px);
+    height: clamp(32px, 4vw, 52px);
     border-left: 2px solid currentColor;
-    padding-left: .28em;
     color: #147b6d;
-    font-size: clamp(26px, 3.4vw, 40px);
-    line-height: 1;
+  }
+  .music-more-arrow::before, .music-more-arrow::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+  }
+  .music-more-arrow::before {
+    left: 0;
+    right: 1px;
+    border-top: 2px solid currentColor;
+    transform: translateY(-50%);
+  }
+  .music-more-arrow::after {
+    right: 1px;
+    width: 9px;
+    height: 9px;
+    border-top: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    transform: translateY(-50%) rotate(45deg);
   }
   .music .step { top: 58%; }
   .music .step:disabled { display: none; }
@@ -513,7 +529,7 @@
   <section class="belt music" data-label="MUSIC" aria-label="MUSIC">
     <div id="music-track" tabindex="0" aria-label="新しいリリース順の楽曲">
       <a class="music-more" href="https://hololive.hololivepro.com/music/">
-        <strong>さらに見る</strong><span class="music-more-arrow" aria-hidden="true">→</span>
+        <strong>さらに見る</strong><span class="music-more-arrow" aria-hidden="true"></span>
       </a>
     </div>
     <button class="step previous" id="music-prev" type="button" aria-label="前の楽曲へ" aria-controls="music-track" disabled>◀</button>
