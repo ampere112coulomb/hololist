@@ -316,9 +316,7 @@
   }
   html { scrollbar-width: none; }
   html::-webkit-scrollbar { display: none; }
-  @media (prefers-reduced-motion: no-preference) {
-    html { scroll-behavior: smooth; }
-  }
+  html { scroll-behavior: smooth; }
   .official-links {
     width: min(1200px, 100% - 40px);
     margin: 0 auto;
@@ -1055,8 +1053,6 @@
     "直近12時間に終了した配信はありません");
   startBelt(document.querySelector('[data-label="NEWS"]'), loadNews, "news",
     "Instagramの投稿はありません");
-
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   let scrollFrame = 0;
   let scrollTarget = 0;
   let scrollPosition = 0;
@@ -1080,11 +1076,19 @@
     scrollFrame = requestAnimationFrame(animatePageScroll);
   }
 
+  function startPageScroll(target) {
+    scrollTarget = target;
+    if (scrollFrame) return;
+    scrollPosition = window.scrollY;
+    scrollLastTime = performance.now();
+    scrollFrame = requestAnimationFrame(animatePageScroll);
+  }
+
   window.addEventListener("wheel", event => {
     const mode = event.deltaMode;
     const delta = event.deltaY;
     if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.shiftKey) return;
-    if (!event.cancelable || reducedMotion.matches || Math.abs(event.deltaX) >= Math.abs(delta)) {
+    if (!event.cancelable || Math.abs(event.deltaX) >= Math.abs(delta)) {
       stopPageScroll();
       return;
     }
@@ -1092,18 +1096,12 @@
     const page = document.scrollingElement;
     const maxScroll = Math.max(0, page.scrollHeight - page.clientHeight);
     const distance = delta * (mode === 1 ? 16 : mode === 2 ? page.clientHeight : 1);
-    scrollTarget = Math.min(maxScroll, Math.max(0, (scrollFrame ? scrollTarget : window.scrollY) + distance));
     event.preventDefault();
-    if (!scrollFrame) {
-      scrollPosition = window.scrollY;
-      scrollLastTime = performance.now();
-      scrollFrame = requestAnimationFrame(animatePageScroll);
-    }
+    startPageScroll(Math.min(maxScroll, Math.max(0, (scrollFrame ? scrollTarget : window.scrollY) + distance)));
   }, {passive: false});
 
   window.addEventListener("pointerdown", stopPageScroll);
   window.addEventListener("keydown", stopPageScroll);
-  reducedMotion.addEventListener("change", stopPageScroll);
 
   function startCatalog(catalog, label) {
     const musicTrack = document.querySelector("#" + catalog + "-track");
@@ -1111,7 +1109,6 @@
     const musicNext = document.querySelector("#" + catalog + "-next");
     const musicStatus = document.querySelector("#" + catalog + "-status");
     const musicMore = musicTrack.querySelector(".music-more");
-    const musicReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let musicSignature = "";
     let musicDrag;
     let suppressMusicClick = false;
@@ -1127,7 +1124,7 @@
       const gap = Number.parseFloat(getComputedStyle(musicTrack).columnGap);
       musicTrack.scrollBy({
         left: direction * 4 * (first.getBoundingClientRect().width + gap),
-        behavior: musicReducedMotion.matches ? "instant" : "smooth"
+        behavior: "smooth"
       });
     }
 
@@ -1274,7 +1271,7 @@
   backToTop.addEventListener("click", () => {
     stopPageScroll();
     document.querySelector(".featured h1").focus({ preventScroll: true });
-    window.scrollTo({ top: 0, behavior: reducedMotion.matches ? "instant" : "smooth" });
+    startPageScroll(0);
   });
   window.addEventListener("scroll", updateBackToTop, { passive: true });
   updateBackToTop();
