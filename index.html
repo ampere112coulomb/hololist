@@ -318,6 +318,53 @@
   @media (prefers-reduced-motion: no-preference) {
     html { scroll-behavior: smooth; }
   }
+  .official-links {
+    width: min(1200px, 100% - 40px);
+    margin: 0 auto;
+    padding: clamp(36px, 6vw, 82px) 0;
+  }
+  .official-links h2 {
+    margin: 0 0 24px;
+    text-align: center;
+    color: #15354a;
+    font-size: clamp(24px, 3vw, 38px);
+  }
+  .official-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 205px), 1fr));
+    gap: 16px;
+  }
+  .official-grid.primary { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 16px; }
+  .official-card {
+    display: grid;
+    align-content: start;
+    overflow: hidden;
+    border: 1px solid #cce3ef;
+    border-radius: 13px;
+    background: #fff;
+    color: #15354a;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgb(11 82 118 / .08);
+  }
+  .official-card:hover, .official-card:focus-visible {
+    outline: 2px solid #1299d7;
+    outline-offset: 2px;
+  }
+  .official-card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    background: #f2faff;
+  }
+  .official-grid.primary img { aspect-ratio: 2.35 / 1; }
+  .official-card strong { display: block; padding: 13px 14px; font-size: 16px; }
+  @media (max-width: 480px) {
+    .official-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .official-grid.primary { grid-template-columns: 1fr; }
+    .official-card strong { padding: 10px; font-size: 14px; }
+  }
 </style>
 </head>
 <body>
@@ -370,6 +417,41 @@
     <button class="step previous" type="button" aria-label="ニュースの前の4件へ" aria-controls="news-track" hidden>◀</button>
     <button class="step next" type="button" aria-label="ニュースの次の4件へ" aria-controls="news-track" hidden>▶</button>
     <p class="status" role="status">Instagramの投稿を取得中…</p>
+  </section>
+  <section class="official-links" aria-labelledby="official-links">
+    <h2 id="official-links">ホロライブ公式リンク</h2>
+    <div class="official-grid primary">
+      <a class="official-card" href="https://hololivepro.com/">
+        <img src="https://hololivepro.com/wp-content/themes/hololive_production/images/rnew/ogp_rnew.jpg" alt="" loading="lazy">
+        <strong>ホロライブプロダクション公式サイト</strong>
+      </a>
+      <a class="official-card" href="https://shop.hololivepro.com/">
+        <img src="https://cdn.shopify.com/s/files/1/0529/2641/5045/files/bnr_ec_talent_625_352_1.png?v=1788231601" alt="" loading="lazy">
+        <strong>hololive production OFFICIAL SHOP</strong>
+      </a>
+    </div>
+    <div class="official-grid">
+      <a class="official-card" href="https://x.com/hololivetv">
+        <img src="https://hololive.hololivepro.com/wp-content/themes/hololive/images/rnew/ogp_rnew.jpg" alt="" loading="lazy">
+        <strong>公式X · JP</strong>
+      </a>
+      <a class="official-card" href="https://x.com/hololive_En">
+        <img src="https://hololive.hololivepro.com/wp-content/themes/hololive/images/rnew/ogp_rnew.jpg" alt="" loading="lazy">
+        <strong>公式X · EN</strong>
+      </a>
+      <a class="official-card" href="https://x.com/hololive_Id">
+        <img src="https://hololive.hololivepro.com/wp-content/themes/hololive/images/rnew/ogp_rnew.jpg" alt="" loading="lazy">
+        <strong>公式X · ID</strong>
+      </a>
+      <a class="official-card" href="https://x.com/hololive_OCG">
+        <img src="https://hololive-official-cardgame.com/wp-content/themes/tcg/assets/img/global/ogp.png" alt="" loading="lazy">
+        <strong>公式X · ホロカ</strong>
+      </a>
+      <a class="official-card" href="https://x.com/hololive_dreams">
+        <img src="https://hololive-dreams.com/ogp.jpg" alt="" loading="lazy">
+        <strong>公式X · ホロドリ</strong>
+      </a>
+    </div>
   </section>
 </main>
 <template id="card-template">
