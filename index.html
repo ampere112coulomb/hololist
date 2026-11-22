@@ -217,7 +217,7 @@
     padding: .4em .8em;
     font-size: clamp(7px, 1.3vw, 26px);
   }
-  #featured-title {
+  .featured-title {
     margin: 0;
     align-self: center;
     font-size: clamp(14px, 1.55vw, 32px);
@@ -225,7 +225,7 @@
     overflow-wrap: anywhere;
     text-shadow: 0 1px 4px #000;
   }
-  #featured-thumbnail {
+  .featured-thumbnail {
     filter: blur(3px);
     object-fit: cover;
     pointer-events: none;
@@ -311,7 +311,7 @@
     .featured-copy h1, .featured-copy p { font-size: clamp(21px, 6vw, 34px); }
     .featured-version { right: 18px; bottom: 8px; }
     .featured-video { position: relative; inset: auto; }
-    #featured-thumbnail { width: 100%; height: 100%; }
+    .featured-thumbnail { width: 100%; height: 100%; }
     #featured-status { left: 7%; }
   }
   html { scrollbar-width: none; }
@@ -535,9 +535,9 @@
       <p id="featured-status" role="status">配信を取得中…</p>
       <div id="featured-heading" class="featured-heading" hidden>
         <span class="badge">LIVE</span>
-        <h2 id="featured-title"></h2>
+        <h2 id="featured-title" class="featured-title"></h2>
       </div>
-      <img id="featured-thumbnail" alt="" hidden>
+      <img id="featured-thumbnail" class="featured-thumbnail" alt="" hidden>
     </div>
   </section>
   <section class="site-intro" aria-labelledby="about-hololist">
@@ -799,7 +799,7 @@
   let featuredVideos = [];
   let rotatingFeatured = false;
 
-  function showFeatured(video) {
+  function showFeatured(video, imageUrl) {
     if (!video) {
       featuredId = undefined;
       featuredThumbnail.removeAttribute("src");
@@ -812,7 +812,7 @@
     featuredTitle.textContent = video.title;
     if (video.id !== featuredId) {
       featuredId = video.id;
-      featuredThumbnail.src = "https://i.ytimg.com/vi/" + video.id + "/maxresdefault.jpg";
+      featuredThumbnail.src = imageUrl ?? "https://i.ytimg.com/vi/" + video.id + "/maxresdefault.jpg";
     }
     featuredThumbnail.hidden = false;
     featuredHeading.hidden = false;
@@ -828,37 +828,59 @@
     showFeatured(videos.find(video => video.id === featuredId) ?? randomFeatured(videos));
   }
 
-  function fadeFeatured(from, to) {
-    return [featuredThumbnail, featuredHeading].map(element =>
-      element.animate([{ opacity: from }, { opacity: to }], {
-        duration: 320, easing: "ease-in-out", fill: "forwards"
-      })
-    );
+  async function loadFeaturedImage(id) {
+    const base = "https://i.ytimg.com/vi/" + id + "/";
+    for (const size of ["maxresdefault", "mqdefault"]) {
+      const image = new Image();
+      image.src = base + size + ".jpg";
+      try {
+        await image.decode();
+        if (size === "mqdefault" || image.naturalWidth >= 480) return image.src;
+      } catch {
+        // Try the standard thumbnail if the larger image is unavailable.
+      }
+    }
+    return null;
   }
 
   async function rotateFeatured() {
     if (rotatingFeatured || document.hidden || featuredVideos.length < 2) return;
     const previousId = featuredId;
+    const candidate = randomFeatured(featuredVideos.filter(video => video.id !== previousId));
     rotatingFeatured = true;
-    let animations = [];
+    const overlays = [];
+    const animations = [];
     try {
-      if (!featuredMotion.matches) {
-        animations = fadeFeatured(1, 0);
-        await Promise.all(animations.map(animation => animation.finished));
+      const imageUrl = await loadFeaturedImage(candidate.id);
+      const next = featuredVideos.find(video => video.id === candidate.id);
+      if (!imageUrl || !next || featuredId !== previousId || featuredVideos.length < 2 || document.hidden) return;
+      if (featuredMotion.matches) {
+        showFeatured(next, imageUrl);
+        return;
       }
-      if (featuredId !== previousId || featuredVideos.length < 2) return;
-      showFeatured(randomFeatured(featuredVideos.filter(video => video.id !== previousId)));
-      for (const animation of animations) animation.cancel();
-      animations = [];
-      if (!featuredMotion.matches) {
-        animations = fadeFeatured(0, 1);
-        await Promise.all(animations.map(animation => animation.finished));
+      for (const element of [featuredThumbnail, featuredHeading]) {
+        const overlay = element.cloneNode(true);
+        overlay.removeAttribute("id");
+        overlay.querySelector("[id]")?.removeAttribute("id");
+        overlay.setAttribute("aria-hidden", "true");
+        element.after(overlay);
+        overlays.push(overlay);
       }
+      showFeatured(next, imageUrl);
+      const options = { duration: 3_000, easing: "ease-in-out", fill: "both" };
+      animations.push(
+        overlays[0].animate([{opacity: 1}, {opacity: 0}], options),
+        overlays[1].animate([{opacity: 1}, {opacity: 0}], options),
+        featuredHeading.animate([{opacity: 0}, {opacity: 1}], options)
+      );
+      await Promise.all(animations.map(animation => animation.finished));
     } finally {
+      for (const overlay of overlays) overlay.remove();
       for (const animation of animations) animation.cancel();
       rotatingFeatured = false;
     }
   }
+
   setInterval(rotateFeatured, featuredRotationMs);
 
   function startBelt(belt, loadVideos, expectedStatus, emptyMessage) {
