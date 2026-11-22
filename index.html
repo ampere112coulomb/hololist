@@ -735,16 +735,25 @@
     return ids;
   }
 
-  async function loadMemberLive() {
+  function getLiveMembers() {
     if (!liveMembers || Date.now() >= liveMembersExpireAt) {
-      liveMembers = await fetchLiveMembers();
       liveMembersExpireAt = Date.now() + 10 * 60_000;
+      liveMembers = fetchLiveMembers().catch(error => {
+        liveMembers = undefined;
+        throw error;
+      });
     }
+    return liveMembers;
+  }
+
+  async function loadMemberLive() {
+    const members = await getLiveMembers();
     const streams = await fetchVideos("live", { status: "live" });
-    return streams.filter(stream => liveMembers.has(stream.channel?.id));
+    return streams.filter(stream => members.has(stream.channel?.id));
   }
 
   async function loadArchive() {
+    const members = await getLiveMembers();
     const now = Date.now();
     const cutoff = now - archiveWindow;
     const limit = 50;
@@ -755,7 +764,7 @@
       });
       for (const video of page) {
         const endedAt = Date.parse(video?.end_actual);
-        if (video?.status === "past" && endedAt >= cutoff && endedAt <= now) archives.push(video);
+        if (video?.status === "past" && members.has(video.channel?.id) && endedAt >= cutoff && endedAt <= now) archives.push(video);
       }
       if (page.length < limit || !(Date.parse(page.at(-1)?.end_actual) >= cutoff)) break;
     }
