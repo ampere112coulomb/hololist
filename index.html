@@ -348,7 +348,7 @@
     align-content: start;
     overflow: hidden;
     border: 1px solid #cce3ef;
-    border-radius: 13px;
+    border-radius: 0;
     background: #fff;
     color: #15354a;
     text-decoration: none;
@@ -473,6 +473,18 @@
   }
   .music .step { top: 58%; }
   .music .step:disabled { display: none; }
+  .events-section { padding-top: 0; }
+  .event-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 245px), 1fr)); }
+  .event-grid .official-card img { object-fit: cover; }
+  .event-grid .official-card strong { padding-bottom: 7px; }
+  .event-date { display: block; padding: 0 14px 13px; color: #326277; font-size: 14px; }
+  .events-catalog {
+    display: inline-block;
+    margin-top: 22px;
+    color: #086890;
+    text-underline-offset: 4px;
+    font-weight: 700;
+  }
 </style>
 </head>
 <body>
@@ -613,6 +625,17 @@
         <strong>公式チャンネル · ホロドリ</strong>
       </a>
     </div>
+  </section>
+  <section class="official-links events-section" aria-labelledby="official-events">
+    <h2 id="official-events">EVENTS</h2>
+    <p id="events-status" role="status">イベント情報を取得中…</p>
+    <div id="events-groups" hidden>
+      <h3>開催中</h3>
+      <div id="events-current" class="official-grid event-grid"></div>
+      <h3>開催予定</h3>
+      <div id="events-upcoming" class="official-grid event-grid"></div>
+    </div>
+    <a class="events-catalog" href="https://hololive.hololivepro.com/events/">公式イベント一覧を見る</a>
   </section>
 </main>
 <template id="card-template">
@@ -1030,6 +1053,65 @@
     suppressMusicClick = false;
   }, true);
   refreshMusic();
+
+  const eventStatus = document.querySelector("#events-status");
+  const eventGroups = document.querySelector("#events-groups");
+  const currentEvents = document.querySelector("#events-current");
+  const upcomingEvents = document.querySelector("#events-upcoming");
+  let eventSignature = "";
+
+  function renderEventGroup(container, events, emptyMessage) {
+    if (!events.length) {
+      const message = document.createElement("p");
+      message.textContent = emptyMessage;
+      container.replaceChildren(message);
+      return;
+    }
+    const cards = events.map(event => {
+      const card = document.createElement("a");
+      card.className = "official-card";
+      card.href = event.href;
+      if (event.image) {
+        const image = document.createElement("img");
+        image.src = event.image;
+        image.alt = "";
+        image.loading = "lazy";
+        card.append(image);
+      }
+      const title = document.createElement("strong");
+      title.textContent = event.title;
+      const date = document.createElement("span");
+      date.className = "event-date";
+      date.textContent = event.dateLabel;
+      card.append(title, date);
+      return card;
+    });
+    container.replaceChildren(...cards);
+  }
+
+  async function refreshEvents() {
+    try {
+      const response = await fetch("./events.json", { cache: "no-store", signal: AbortSignal.timeout(15_000) });
+      if (!response.ok) throw new Error("EVENTS HTTP " + response.status);
+      const events = await response.json();
+      if (!Array.isArray(events)) throw new Error("Invalid EVENTS data");
+      const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Tokyo" }).format(new Date());
+      const signature = today + JSON.stringify(events);
+      if (eventSignature === signature) return;
+      const current = events.filter(event => event.start <= today && (!event.end || event.end >= today));
+      const upcoming = events.filter(event => event.start > today);
+      renderEventGroup(currentEvents, current, "開催中のイベントはありません。");
+      renderEventGroup(upcomingEvents, upcoming, "開催予定のイベントはありません。");
+      eventSignature = signature;
+      eventStatus.hidden = true;
+      eventGroups.hidden = false;
+    } catch {
+      if (!eventSignature) eventStatus.textContent = "イベント情報を取得できませんでした。";
+    } finally {
+      setTimeout(refreshEvents, 60_000);
+    }
+  }
+  refreshEvents();
 </script>
 </body>
 </html>
