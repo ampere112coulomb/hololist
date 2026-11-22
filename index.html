@@ -672,6 +672,35 @@
     return videos;
   }
 
+  const liveMemberGroups = /^(?:\d+(?:st|nd|rd|th) Generation\b|GAMERS$|English -|Indonesia |DEV_IS |ASOBI★MAWARI-TAI!$)/;
+  let liveMembers;
+  let liveMembersExpireAt = 0;
+
+  async function fetchLiveMembers() {
+    const ids = new Set();
+    const limit = 50;
+    for (let offset = 0; ; offset += limit) {
+      const channels = await fetchVideos("channels", { type: "vtuber", limit, offset });
+      for (const channel of channels) {
+        if (channel.org === "Hololive" && channel.inactive === false && liveMemberGroups.test(channel.group)) {
+          ids.add(channel.id);
+        }
+      }
+      if (channels.length < limit) break;
+    }
+    if (!ids.size) throw new Error("No active hololive member channels returned");
+    return ids;
+  }
+
+  async function loadMemberLive() {
+    if (!liveMembers || Date.now() >= liveMembersExpireAt) {
+      liveMembers = await fetchLiveMembers();
+      liveMembersExpireAt = Date.now() + 10 * 60_000;
+    }
+    const streams = await fetchVideos("live", { status: "live" });
+    return streams.filter(stream => liveMembers.has(stream.channel?.id));
+  }
+
   async function loadArchive() {
     const now = Date.now();
     const cutoff = now - archiveWindow;
@@ -902,7 +931,7 @@
   }
 
   startBelt(document.querySelector('[data-label="LIVE"]'),
-    () => fetchVideos("live", { status: "live" }), "live",
+    loadMemberLive, "live",
     "現在ライブ配信中の枠はありません");
   startBelt(document.querySelector('[data-label="ARCHIVE"]'),
     loadArchive, "past",
