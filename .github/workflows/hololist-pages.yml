@@ -44,8 +44,8 @@ jobs:
           mkdir -p _site
           cp index.html news.json LIVE_background.png ARCHIVE_background.png NEWS_background.png holodorinavi-logo.png hololist-logo.png _site/
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
-      - uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v5
         id: deployment
