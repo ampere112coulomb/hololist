@@ -396,7 +396,7 @@
     display: flex;
     gap: 14px;
     min-width: 0;
-    padding: 8px 55px;
+    padding: 8px 0 8px 55px;
     overflow-x: auto;
     scrollbar-width: none;
     cursor: grab;
@@ -412,20 +412,7 @@
     overflow: hidden;
     background: #fff;
   }
-  .music-art { position: relative; }
-  .music-art img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; background: #edf7e9; -webkit-user-drag: none; }
-  .music-rank {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    min-width: 30px;
-    padding: 3px 6px;
-    border-radius: 5px;
-    background: #245d2d;
-    color: #fff;
-    text-align: center;
-    font-weight: 800;
-  }
+  .music-card img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; background: #edf7e9; -webkit-user-drag: none; }
   .music-title, .music-artist {
     display: block;
     margin: 8px 10px;
@@ -438,17 +425,29 @@
     display: grid;
     align-content: center;
     justify-items: center;
-    gap: 7px;
-    padding: 16px;
-    background: #245d2d;
-    color: #fff;
+    gap: 10px;
+    padding: 18px 12px;
+    flex-basis: clamp(124px, 14vw, 176px);
+    border-radius: 0;
+    background: rgb(255 255 255 / .74);
+    color: #10778a;
     text-align: center;
     cursor: pointer;
   }
-  .music-more strong { font-size: 19px; }
-  .music-more span { font-size: 14px; }
+  #music-track .music-more:hover { background: rgb(255 255 255 / .94); }
+  .music-more strong { font-size: clamp(16px, 2vw, 23px); }
+  .music-more-arrow {
+    display: grid;
+    min-height: 1.6em;
+    align-items: center;
+    border-left: 2px solid currentColor;
+    padding-left: .18em;
+    color: #0b2421;
+    font-size: clamp(28px, 4vw, 46px);
+    line-height: 1;
+  }
   .music .step { top: 58%; }
-  .music .step:disabled { opacity: .35; cursor: default; }
+  .music .step:disabled { display: none; }
 </style>
 </head>
 <body>
@@ -505,7 +504,7 @@
   <section class="belt music" data-label="MUSIC" aria-label="MUSIC">
     <div id="music-track" tabindex="0" aria-label="新しいリリース順の楽曲">
       <a class="music-more" href="https://hololive.hololivepro.com/music/">
-        <strong>さらに見る</strong><span>ホロライブ公式MUSIC</span>
+        <strong>さらに見る</strong><span class="music-more-arrow" aria-hidden="true">→</span>
       </a>
     </div>
     <button class="step previous" id="music-prev" type="button" aria-label="前の楽曲へ" aria-controls="music-track" disabled>◀</button>
@@ -946,14 +945,13 @@
       const signature = JSON.stringify(releases);
       if (musicSignature === signature || musicDrag) return;
       const position = musicTrack.scrollLeft;
-      const cards = releases.slice(0, 20).map((release, index) => {
+      const cards = releases.slice(0, 20).map(release => {
         const card = document.createElement("a");
         card.className = "music-card";
         card.href = release.href;
         card.title = release.title;
-        card.innerHTML = '<div class="music-art"><img alt="" loading="lazy" draggable="false"><span class="music-rank"></span></div><strong class="music-title"></strong><span class="music-artist"></span>';
+        card.innerHTML = '<img alt="" loading="lazy" draggable="false"><strong class="music-title"></strong><span class="music-artist"></span>';
         card.querySelector("img").src = release.image;
-        card.querySelector(".music-rank").textContent = index + 1;
         card.querySelector(".music-title").textContent = release.title;
         card.querySelector(".music-artist").textContent = release.artist;
         return card;
