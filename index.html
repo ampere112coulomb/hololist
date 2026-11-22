@@ -422,28 +422,37 @@
   }
   .music-artist { color: #365540; font-size: 14px; }
   #music-track .music-more {
+    --music-more-surface: rgb(250 255 252 / .82);
     display: grid;
     align-content: center;
     justify-items: center;
-    gap: 10px;
+    gap: 14px;
     padding: 18px 12px;
     flex-basis: clamp(124px, 14vw, 176px);
+    border: 1px solid rgb(255 255 255 / .88);
     border-radius: 0;
-    background: rgb(255 255 255 / .74);
-    color: #10778a;
+    background: linear-gradient(155deg, var(--music-more-surface), rgb(202 250 230 / .65));
+    color: #08747d;
     text-align: center;
     cursor: pointer;
   }
-  #music-track .music-more:hover { background: rgb(255 255 255 / .94); }
-  .music-more strong { font-size: clamp(16px, 2vw, 23px); }
+  #music-track .music-more:is(:hover, :focus-visible) {
+    --music-more-surface: #f8fffb;
+    border-color: #29a99a;
+    color: #07575b;
+  }
+  .music-more strong {
+    font-size: clamp(16px, 2vw, 23px);
+    letter-spacing: .045em;
+  }
   .music-more-arrow {
     display: grid;
-    min-height: 1.6em;
+    min-height: 1.3em;
     align-items: center;
     border-left: 2px solid currentColor;
-    padding-left: .18em;
-    color: #0b2421;
-    font-size: clamp(28px, 4vw, 46px);
+    padding-left: .28em;
+    color: #147b6d;
+    font-size: clamp(26px, 3.4vw, 40px);
     line-height: 1;
   }
   .music .step { top: 58%; }
