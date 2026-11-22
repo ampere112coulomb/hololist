@@ -794,9 +794,12 @@
     if (featuredThumbnail.naturalWidth < 480) useStandardFeaturedThumbnail();
   });
 
-  function updateFeatured(videos) {
-    let video = videos.find(item => item.id === featuredId);
-    video ??= videos[Math.floor(Math.random() * videos.length)];
+  const featuredRotationMs = 8_000;
+  const featuredMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let featuredVideos = [];
+  let rotatingFeatured = false;
+
+  function showFeatured(video) {
     if (!video) {
       featuredId = undefined;
       featuredThumbnail.removeAttribute("src");
@@ -815,6 +818,48 @@
     featuredHeading.hidden = false;
     featuredStatus.hidden = true;
   }
+
+  function randomFeatured(videos) {
+    return videos[Math.floor(Math.random() * videos.length)];
+  }
+
+  function updateFeatured(videos) {
+    featuredVideos = videos;
+    showFeatured(videos.find(video => video.id === featuredId) ?? randomFeatured(videos));
+  }
+
+  function fadeFeatured(from, to) {
+    return [featuredThumbnail, featuredHeading].map(element =>
+      element.animate([{ opacity: from }, { opacity: to }], {
+        duration: 320, easing: "ease-in-out", fill: "forwards"
+      })
+    );
+  }
+
+  async function rotateFeatured() {
+    if (rotatingFeatured || document.hidden || featuredVideos.length < 2) return;
+    const previousId = featuredId;
+    rotatingFeatured = true;
+    let animations = [];
+    try {
+      if (!featuredMotion.matches) {
+        animations = fadeFeatured(1, 0);
+        await Promise.all(animations.map(animation => animation.finished));
+      }
+      if (featuredId !== previousId || featuredVideos.length < 2) return;
+      showFeatured(randomFeatured(featuredVideos.filter(video => video.id !== previousId)));
+      for (const animation of animations) animation.cancel();
+      animations = [];
+      if (!featuredMotion.matches) {
+        animations = fadeFeatured(0, 1);
+        await Promise.all(animations.map(animation => animation.finished));
+      }
+    } finally {
+      for (const animation of animations) animation.cancel();
+      rotatingFeatured = false;
+    }
+  }
+  setInterval(rotateFeatured, featuredRotationMs);
 
   function startBelt(belt, loadVideos, expectedStatus, emptyMessage) {
     const track = belt.querySelector(".track");
