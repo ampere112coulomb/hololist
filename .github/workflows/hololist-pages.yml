@@ -42,15 +42,19 @@ jobs:
             echo "::warning::Official EVENTS refresh failed; publishing the saved events."
             node -e 'const data=require("./events.json"); if (!Array.isArray(data)) process.exit(1)'
           fi
-          git add news.json music.json events.json
-          if ! git diff --cached --quiet -- news.json music.json events.json; then
+          if ! node update-goods.mjs; then
+            echo "::warning::Official shop refresh failed; publishing the saved GOODS cards."
+            node -e 'const data=require("./goods.json"); if (!Array.isArray(data) || data.length !== 20) process.exit(1)'
+          fi
+          git add news.json music.json events.json goods.json
+          if ! git diff --cached --quiet -- news.json music.json events.json goods.json; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git commit -m "Update NEWS, MUSIC and EVENTS cards"
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
           mkdir -p _site
-          cp index.html news.json music.json events.json MUSIC_background.png LIVE_background.png ARCHIVE_background.png NEWS_background.png holodorinavi-logo.png hololist-logo.png _site/
+          cp index.html news.json music.json events.json goods.json MUSIC_background.png LIVE_background.png ARCHIVE_background.png NEWS_background.png holodorinavi-logo.png hololist-logo.png _site/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v5
         with:
