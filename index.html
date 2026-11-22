@@ -296,19 +296,12 @@
   }
   .related-links a:hover, .related-links a:focus-visible { border-color: #0083b5; }
   .related-links img { display: block; width: 100%; height: clamp(38px, 5.5vw, 62px); object-fit: contain; }
-  @media (max-width: 700px) and (orientation: portrait) {
-    .featured {
-      display: grid;
-      grid-template-rows: auto minmax(250px, 1fr);
-      height: auto;
-      min-height: 100svh;
-    }
+  @media (max-width: 700px), (max-width: 1000px) and (orientation: landscape) and (pointer: coarse) {
+    .featured { height: auto; }
     .featured-copy { position: relative; inset: auto; clip-path: none; padding: 20px 18px 40px; gap: 10px; }
     .featured-copy h1, .featured-copy p { font-size: clamp(21px, 6vw, 34px); }
     .featured-version { right: 18px; bottom: 8px; }
-    .featured-video { position: relative; inset: auto; }
-    .featured-thumbnail { width: 100%; height: 100%; }
-    #featured-status { left: 7%; }
+    .featured-video { display: none; }
   }
   html { scrollbar-width: none; }
   html::-webkit-scrollbar { display: none; }
