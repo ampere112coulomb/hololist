@@ -225,8 +225,9 @@
     overflow-wrap: anywhere;
     text-shadow: 0 1px 4px #000;
   }
-  #featured-player {
+  #featured-thumbnail {
     filter: blur(3px);
+    object-fit: cover;
     pointer-events: none;
     position: absolute;
     right: 0;
@@ -310,7 +311,7 @@
     .featured-copy h1, .featured-copy p { font-size: clamp(21px, 6vw, 34px); }
     .featured-version { right: 18px; bottom: 8px; }
     .featured-video { position: relative; inset: auto; }
-    #featured-player { width: 100%; height: 100%; }
+    #featured-thumbnail { width: 100%; height: 100%; }
     #featured-status { left: 7%; }
   }
   html { scrollbar-width: none; }
@@ -536,9 +537,7 @@
         <span class="badge">LIVE</span>
         <h2 id="featured-title"></h2>
       </div>
-      <iframe id="featured-player" title="ピックアップライブ" tabindex="-1" inert hidden
-        allow="autoplay; encrypted-media"
-        referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      <img id="featured-thumbnail" alt="" hidden>
     </div>
   </section>
   <section class="site-intro" aria-labelledby="about-hololist">
@@ -778,31 +777,41 @@
     return result;
   }
 
-  const featuredPlayer = document.querySelector("#featured-player");
+  const featuredThumbnail = document.querySelector("#featured-thumbnail");
   const featuredHeading = document.querySelector("#featured-heading");
   const featuredTitle = document.querySelector("#featured-title");
   const featuredStatus = document.querySelector("#featured-status");
   let featuredId;
+
+  function useStandardFeaturedThumbnail() {
+    if (featuredThumbnail.getAttribute("src")?.endsWith("/maxresdefault.jpg")) {
+      featuredThumbnail.src = "https://i.ytimg.com/vi/" + featuredId + "/mqdefault.jpg";
+    }
+  }
+
+  featuredThumbnail.addEventListener("error", useStandardFeaturedThumbnail);
+  featuredThumbnail.addEventListener("load", () => {
+    if (featuredThumbnail.naturalWidth < 480) useStandardFeaturedThumbnail();
+  });
 
   function updateFeatured(videos) {
     let video = videos.find(item => item.id === featuredId);
     video ??= videos[Math.floor(Math.random() * videos.length)];
     if (!video) {
       featuredId = undefined;
-      featuredPlayer.removeAttribute("src");
-      featuredPlayer.hidden = true;
+      featuredThumbnail.removeAttribute("src");
+      featuredThumbnail.hidden = true;
       featuredHeading.hidden = true;
       featuredStatus.textContent = "現在ライブ配信中の枠はありません";
       featuredStatus.hidden = false;
       return;
     }
     featuredTitle.textContent = video.title;
-    featuredPlayer.title = video.title;
     if (video.id !== featuredId) {
       featuredId = video.id;
-      featuredPlayer.src = "https://www.youtube.com/embed/" + video.id + "?autoplay=1&mute=1&playsinline=1&rel=0&controls=0&disablekb=1&fs=0";
+      featuredThumbnail.src = "https://i.ytimg.com/vi/" + video.id + "/maxresdefault.jpg";
     }
-    featuredPlayer.hidden = false;
+    featuredThumbnail.hidden = false;
     featuredHeading.hidden = false;
     featuredStatus.hidden = true;
   }
