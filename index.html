@@ -10,14 +10,10 @@
   body {
     margin: 0;
     background-color: #fff;
-    background-image:
-      linear-gradient(90deg, transparent, #fff 35%, #fff 65%, transparent),
-      radial-gradient(circle, rgb(24 154 216 / .28) 1.2px, transparent 1.8px),
-      repeating-linear-gradient(60deg, rgb(34 162 221 / .20) 0 1px, transparent 1px 76px),
-      repeating-linear-gradient(120deg, rgb(34 162 221 / .15) 0 1px, transparent 1px 76px),
-      linear-gradient(90deg, #eaf8ff, #fff 24%, #fff 76%, #eaf8ff);
-    background-size: 100% 100%, 44px 44px, auto, auto, 100% 100%;
+    background-image: url("./background.png");
     background-position: center;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     background-attachment: fixed;
     color: #080808;
     font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
@@ -514,8 +510,7 @@
   #back-to-top:hover, #back-to-top:focus-visible { background: #e5f6ff; }
   .goods {
     background-color: #fcebdc;
-    background-image: repeating-linear-gradient(135deg, rgb(220 132 63 / .2) 0 1px, transparent 1px 42px);
-    background-size: auto;
+    background-image: url("./GOODS_background.png");
   }
   .goods::before { color: #83451d; }
   #goods-track .music-more { color: #78421f; }

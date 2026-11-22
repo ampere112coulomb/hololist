@@ -4,12 +4,13 @@ import {createServer} from "node:http";
 const files = new Map([
   ["/", ["index.html", "text/html; charset=utf-8"]],
   ["/index.html", ["index.html", "text/html; charset=utf-8"]],
+  ["/background.png", ["background.png", "image/png"]],
   ["/news.json", ["news.json", "application/json; charset=utf-8"]],
   ["/music.json", ["music.json", "application/json; charset=utf-8"]],
   ["/events.json", ["events.json", "application/json; charset=utf-8"]],
   ["/goods.json", ["goods.json", "application/json; charset=utf-8"]],
   ...["holodorinavi", "hololist"].map(name => ["/" + name + "-logo.png", [name + "-logo.png", "image/png"]]),
-  ...["LIVE", "ARCHIVE", "NEWS", "MUSIC"].map(name => [
+  ...["LIVE", "ARCHIVE", "NEWS", "MUSIC", "GOODS"].map(name => [
     "/" + name + "_background.png", [name + "_background.png", "image/png"]
   ])
 ]);
