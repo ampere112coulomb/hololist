@@ -1,11 +1,13 @@
 import {writeFile} from "node:fs/promises";
 
 const shop = "https://shop.hololivepro.com";
-const url = shop + "/collections/all?sort_by=created-descending";
-const response = await fetch(url, {signal: AbortSignal.timeout(15_000)});
+const url = shop + "/collections/all?sort_by=created-descending&country=JP";
+const response = await fetch(url, {cache: "no-store", signal: AbortSignal.timeout(15_000)});
 if (!response.ok) throw new Error("Official shop HTTP " + response.status);
 
 const html = await response.text();
+const country = html.match(/Shopify\.country\s*=\s*"([^"]+)"/)?.[1];
+if (country !== "JP") throw new Error("Official shop did not return the Japan catalog");
 const items = new Map();
 const links = /<a\b[^>]*class="Item_inner"[^>]*href="(\/products\/[\w-]+)"[^>]*>([\s\S]*?)<\/a>/gi;
 for (const [, path, card] of html.matchAll(links)) {
