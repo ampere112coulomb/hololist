@@ -54,7 +54,7 @@ jobs:
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
           mkdir -p _site
-          cp index.html news.json music.json events.json goods.json background.png GOODS_background.png MUSIC_background.png LIVE_background.png ARCHIVE_background.png NEWS_background.png holodorinavi-logo.png hololist-logo.png _site/
+          cp index.html styles.css app.js news.json music.json events.json goods.json background.png GOODS_background.png MUSIC_background.png LIVE_background.png ARCHIVE_background.png NEWS_background.png holodorinavi-logo.png hololist-logo.png _site/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v5
         with:

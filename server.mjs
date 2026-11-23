@@ -4,6 +4,8 @@ import {createServer} from "node:http";
 const files = new Map([
   ["/", ["index.html", "text/html; charset=utf-8"]],
   ["/index.html", ["index.html", "text/html; charset=utf-8"]],
+  ["/styles.css", ["styles.css", "text/css; charset=utf-8"]],
+  ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
   ["/background.png", ["background.png", "image/png"]],
   ["/news.json", ["news.json", "application/json; charset=utf-8"]],
   ["/music.json", ["music.json", "application/json; charset=utf-8"]],
