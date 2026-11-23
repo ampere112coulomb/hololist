@@ -3,7 +3,7 @@
 body {
   margin: 0;
   background-color: #fff;
-  background-image: url("./background.png");
+  background-image: url("./assets/backgrounds/background.png");
   background-position: center;
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -24,7 +24,7 @@ body {
   isolation: isolate;
   container-type: inline-size;
   background-color: #31b0f4;
-  background-image: url("./LIVE_background.png");
+  background-image: url("./assets/backgrounds/LIVE_background.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: 100% max(100%, 56.25vw);
@@ -128,7 +128,7 @@ body {
 .archive {
   margin-top: 0;
   background-color: #367cba;
-  background-image: url("./ARCHIVE_background.png");
+  background-image: url("./assets/backgrounds/ARCHIVE_background.png");
 }
 .archive::before { color: #397fb2; font-size: clamp(45px, 11cqw, 106.4px); }
 .archive .badge { background: #205782; }
@@ -136,7 +136,7 @@ body {
 .news {
   margin-top: 0;
   background-color: #cfe7f6;
-  background-image: url("./NEWS_background.png");
+  background-image: url("./assets/backgrounds/NEWS_background.png");
 }
 .news::before { color: #ffece8; text-shadow: 0 2px 4px rgb(100 30 30 / .75); }
 .news .badge { background: #7545a1; }
@@ -370,7 +370,7 @@ html { scroll-behavior: smooth; }
   padding: 63px 0 20px;
   min-height: 0;
   background-color: #b6f8a4;
-  background-image: url("./MUSIC_background.png");
+  background-image: url("./assets/backgrounds/MUSIC_background.png");
 }
 .music::before { top: 6px; font-size: clamp(40px, 9cqw, 80px); color: #235520; opacity: .32; }
 :is(#music-track, #goods-track) {
@@ -496,7 +496,7 @@ html { scroll-behavior: smooth; }
 #back-to-top:hover, #back-to-top:focus-visible { background: #e5f6ff; }
 .goods {
   background-color: #fcebdc;
-  background-image: url("./GOODS_background.png");
+  background-image: url("./assets/backgrounds/GOODS_background.png");
 }
 .goods::before { color: #83451d; }
 #goods-track .music-more { color: #78421f; }

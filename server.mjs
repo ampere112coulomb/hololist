@@ -6,14 +6,14 @@ const files = new Map([
   ["/index.html", ["index.html", "text/html; charset=utf-8"]],
   ["/styles.css", ["styles.css", "text/css; charset=utf-8"]],
   ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
-  ["/background.png", ["background.png", "image/png"]],
+  ["/assets/backgrounds/background.png", ["assets/backgrounds/background.png", "image/png"]],
   ["/news.json", ["news.json", "application/json; charset=utf-8"]],
   ["/music.json", ["music.json", "application/json; charset=utf-8"]],
   ["/events.json", ["events.json", "application/json; charset=utf-8"]],
   ["/goods.json", ["goods.json", "application/json; charset=utf-8"]],
-  ...["holodorinavi", "hololist"].map(name => ["/" + name + "-logo.png", [name + "-logo.png", "image/png"]]),
+  ...["holodorinavi", "hololist"].map(name => ["/assets/logos/" + name + "-logo.png", ["assets/logos/" + name + "-logo.png", "image/png"]]),
   ...["LIVE", "ARCHIVE", "NEWS", "MUSIC", "GOODS"].map(name => [
-    "/" + name + "_background.png", [name + "_background.png", "image/png"]
+    "/assets/backgrounds/" + name + "_background.png", ["assets/backgrounds/" + name + "_background.png", "image/png"]
   ])
 ]);
 
