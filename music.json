@@ -1,5 +1,19 @@
 [
   {
+    "id": "851",
+    "title": "Reverberate",
+    "artist": "響咲リオナ",
+    "image": "https://hololive.hololivepro.com/wp-content/uploads/2026/11/Reverberate.png",
+    "href": "https://hololive.hololivepro.com/music/851/"
+  },
+  {
+    "id": "798",
+    "title": "ビギナーズ・ハイ",
+    "artist": "大神ミオ",
+    "image": "https://hololive.hololivepro.com/wp-content/uploads/2026/11/BeginnersHigh.png",
+    "href": "https://hololive.hololivepro.com/music/798/"
+  },
+  {
     "id": "873",
     "title": "怪宴スペクタクル",
     "artist": "夏色まつり, Vestia Zeta, Nerissa Ravencroft, 儒烏風亭らでん, 轟はじめ",
@@ -124,19 +138,5 @@
     "artist": "輪堂千速",
     "image": "https://hololive.hololivepro.com/wp-content/uploads/2026/10/HatenaiTabi.png",
     "href": "https://hololive.hololivepro.com/music/850/"
-  },
-  {
-    "id": "852",
-    "title": "S.O.Re : Song Of Reality",
-    "artist": "Ayunda Risu",
-    "image": "https://hololive.hololivepro.com/wp-content/uploads/2026/10/S.O.R.eSongofReality.png",
-    "href": "https://hololive.hololivepro.com/music/852/"
-  },
-  {
-    "id": "838",
-    "title": "ラプ様アーティスト化計画",
-    "artist": "ラプラス・ダークネス",
-    "image": "https://hololive.hololivepro.com/wp-content/uploads/2026/10/Project-Y.M.A.-.png",
-    "href": "https://hololive.hololivepro.com/music/838/"
   }
 ]
