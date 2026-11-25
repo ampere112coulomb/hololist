@@ -1,5 +1,12 @@
 [
   {
+    "id": "868",
+    "title": "ヒカリノ海ヘ",
+    "artist": "白銀ノエル",
+    "image": "https://hololive.hololivepro.com/wp-content/uploads/2026/11/HikarinoUmie.png",
+    "href": "https://hololive.hololivepro.com/music/868/"
+  },
+  {
     "id": "851",
     "title": "Reverberate",
     "artist": "響咲リオナ",
@@ -131,12 +138,5 @@
     "artist": "博衣こより, AZKi, 雪花ラミィ",
     "image": "https://hololive.hololivepro.com/wp-content/uploads/2026/11/OshitaraHikenaiKoideshita.png",
     "href": "https://hololive.hololivepro.com/music/855/"
-  },
-  {
-    "id": "850",
-    "title": "果てない旅",
-    "artist": "輪堂千速",
-    "image": "https://hololive.hololivepro.com/wp-content/uploads/2026/10/HatenaiTabi.png",
-    "href": "https://hololive.hololivepro.com/music/850/"
   }
 ]
